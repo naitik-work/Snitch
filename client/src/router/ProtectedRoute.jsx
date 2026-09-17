@@ -3,10 +3,11 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../features/auth/hooks/useAuth'
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuth()
+  const { isAuthenticated, isLoading, token, user } = useAuth()
   const location = useLocation()
 
-  if (isLoading) {
+  // Wait for user state restoration if a stored token is active
+  if (isLoading || (token && !user)) {
     return (
       <div className="py-24 text-center">
         <span className="inline-block animate-spin border-2 border-ink border-t-transparent rounded-full w-8 h-8" />

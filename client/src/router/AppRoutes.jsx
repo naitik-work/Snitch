@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import { HomePage } from '../pages/HomePage'
 import { ProductsPage } from '../pages/ProductsPage'
 import { ProductDetailPage } from '../pages/ProductDetailPage'
@@ -31,6 +31,16 @@ export const AppRoutes = () => {
       <Route path="/products" element={<ProductsPage />} />
       <Route path="/products/:id" element={<ProductDetailPage />} />
       <Route path="/bag" element={<BagPage />} />
+      <Route path="/cart" element={<Navigate to="/bag" replace />} />
+
+      {/* Direct Category Aliases */}
+      <Route path="/shirts" element={<Navigate to="/products?category=Shirts" replace />} />
+      <Route path="/t-shirts" element={<Navigate to="/products?category=T-Shirts" replace />} />
+      <Route path="/jeans" element={<Navigate to="/products?category=Jeans" replace />} />
+      <Route path="/hoodies" element={<Navigate to="/products?category=Hoodies" replace />} />
+      <Route path="/jackets" element={<Navigate to="/products?category=Jackets" replace />} />
+      <Route path="/joggers" element={<Navigate to="/products?category=Joggers" replace />} />
+      <Route path="/shorts" element={<Navigate to="/products?category=Shorts" replace />} />
 
       {/* Auth */}
       <Route path="/auth/login" element={<LoginPage />} />
