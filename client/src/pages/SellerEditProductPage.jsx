@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useSellerProducts } from '../features/products/hooks/useSellerProducts'
 import { SellerProductForm } from '../features/products/ui/SellerProductForm'
+import { SellerNav } from '../components/SellerNav'
 import { ArrowLeft } from 'lucide-react'
 
 export const SellerEditProductPage = () => {
@@ -16,13 +17,57 @@ export const SellerEditProductPage = () => {
   } = useSellerProducts()
 
   const [product, setProduct] = useState(null)
+  const [attempted, setAttempted] = useState(false)
 
   useEffect(() => {
-    if (sellerProducts.length === 0) {
-      loadSellerProducts(1)
-    } else {
-      const found = sellerProducts.find((p) => (p._id || p.id) === id)
-      if (found) setProduct(found)
+    let isMounted = true
+
+    const findSellerProduct = async () => {
+      // 1. Check loaded products
+      let found = sellerProducts.find((p) => (p._id || p.id) === id)
+      if (found) {
+        if (isMounted) {
+          setProduct(found)
+          setAttempted(true)
+        }
+        return
+      }
+
+      // 2. Fetch page 1
+      const res = await loadSellerProducts(1)
+      const page1Products = res?.payload?.products || []
+      found = page1Products.find((p) => (p._id || p.id) === id)
+      if (found) {
+        if (isMounted) {
+          setProduct(found)
+          setAttempted(true)
+        }
+        return
+      }
+
+      // 3. Scan subsequent pages if any
+      const totalPages = res?.payload?.totalPages || 1
+      for (let p = 2; p <= totalPages; p++) {
+        const nextRes = await loadSellerProducts(p)
+        const nextProducts = nextRes?.payload?.products || []
+        found = nextProducts.find((item) => (item._id || item.id) === id)
+        if (found) {
+          if (isMounted) {
+            setProduct(found)
+            setAttempted(true)
+          }
+          return
+        }
+      }
+
+      if (isMounted) {
+        setAttempted(true)
+      }
+    }
+
+    findSellerProduct()
+    return () => {
+      isMounted = false
     }
   }, [id, sellerProducts, loadSellerProducts])
 
@@ -64,30 +109,33 @@ export const SellerEditProductPage = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
-      <div className="mb-8 flex items-center justify-between border-b border-hairline pb-6">
-        <div>
-          <span className="text-xs uppercase tracking-eyebrow text-ink-muted">Seller Portal</span>
-          <h1 className="font-serif text-3xl md:text-4xl text-ink font-normal mt-1">
-            Edit: {product.title}
-          </h1>
+    <div>
+      <SellerNav />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="mb-8 flex items-center justify-between border-b border-hairline pb-6">
+          <div>
+            <span className="text-xs uppercase tracking-eyebrow text-ink-muted">Seller Portal</span>
+            <h1 className="font-serif text-3xl md:text-4xl text-ink font-normal mt-1">
+              Edit: {product.title}
+            </h1>
+          </div>
+          <Link
+            to="/seller/products"
+            className="inline-flex items-center gap-2 text-xs uppercase tracking-eyebrow text-ink hover:text-accent transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back to Products
+          </Link>
         </div>
-        <Link
-          to="/seller"
-          className="inline-flex items-center gap-2 text-xs uppercase tracking-eyebrow text-ink hover:text-accent transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
-        </Link>
-      </div>
 
-      <SellerProductForm
-        initialData={product}
-        onSubmit={handleFormSubmit}
-        onDeleteImage={handleDeleteImage}
-        isLoading={isLoading}
-        error={error}
-      />
+        <SellerProductForm
+          initialData={product}
+          onSubmit={handleFormSubmit}
+          onDeleteImage={handleDeleteImage}
+          isLoading={isLoading}
+          error={error}
+        />
+      </div>
     </div>
   )
 }

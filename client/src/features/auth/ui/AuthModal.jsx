@@ -16,8 +16,8 @@ export const AuthModal = () => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-md bg-canvas border border-hairline p-8 shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/75 animate-fadeIn">
+      <div className="relative w-full max-w-md bg-surface border border-hairline p-8 shadow-2xl">
         <button
           onClick={handleClose}
           className="absolute top-4 right-4 p-2 text-ink-muted hover:text-ink transition-colors"

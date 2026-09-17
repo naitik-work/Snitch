@@ -157,13 +157,22 @@ export const OrderHistoryList = ({
                       {order.address?.state} - {order.address?.zip}
                     </span>
                   </div>
-                  <div className="sm:text-right">
-                    <span className="block uppercase tracking-eyebrow text-[10px] text-ink font-medium">
-                      Total Paid:
-                    </span>
-                    <span className="font-serif text-lg text-ink font-normal">
-                      {formatPrice(order.totalPrice?.amount, order.totalPrice?.currency)}
-                    </span>
+                  <div className="flex items-center gap-4 sm:text-right">
+                    <div>
+                      <span className="block uppercase tracking-eyebrow text-[10px] text-ink font-medium">
+                        Total Paid:
+                      </span>
+                      <span className="font-serif text-lg text-ink font-normal">
+                        {formatPrice(order.totalPrice?.amount, order.totalPrice?.currency)}
+                      </span>
+                    </div>
+                    <Link
+                      to={`/orders/${order._id}`}
+                      className="px-3 py-2 border border-hairline hover:border-ink text-ink text-xs uppercase tracking-eyebrow font-medium transition-colors inline-flex items-center gap-1"
+                    >
+                      View Details
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
                 </div>
               </div>

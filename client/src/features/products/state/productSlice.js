@@ -3,9 +3,11 @@ import { productApi } from '../api/productApi'
 
 export const fetchProducts = createAsyncThunk(
   'products/fetchProducts',
-  async (page = 1, { rejectWithValue }) => {
+  async (params = 1, { rejectWithValue }) => {
     try {
-      const response = await productApi.getProducts(page)
+      const page = typeof params === 'object' ? params.page || 1 : params || 1
+      const category = typeof params === 'object' ? params.category || '' : ''
+      const response = await productApi.getProducts(page, category)
       return response.data
     } catch (err) {
       return rejectWithValue(err.message || 'Failed to load products')
@@ -126,9 +128,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.isLoading = false
-        state.items = action.payload.products || []
-        state.totalPages = action.payload.totalPages || 1
-        state.currentPage = action.payload.currentPage || 1
+        const payloadData = action.payload?.data || action.payload || {}
+        state.items = payloadData.products || action.payload?.products || []
+        state.totalPages = payloadData.totalPages || action.payload?.totalPages || 1
+        state.currentPage = payloadData.currentPage || action.payload?.currentPage || 1
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.isLoading = false
@@ -143,9 +146,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchSellerProducts.fulfilled, (state, action) => {
         state.isSellerLoading = false
-        state.sellerItems = action.payload.products || []
-        state.sellerTotalPages = action.payload.totalPages || 1
-        state.sellerCurrentPage = action.payload.currentPage || 1
+        const sellerData = action.payload?.data || action.payload || {}
+        state.sellerItems = sellerData.products || action.payload?.products || []
+        state.sellerTotalPages = sellerData.totalPages || action.payload?.totalPages || 1
+        state.sellerCurrentPage = sellerData.currentPage || action.payload?.currentPage || 1
       })
       .addCase(fetchSellerProducts.rejected, (state, action) => {
         state.isSellerLoading = false

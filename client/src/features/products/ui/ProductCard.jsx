@@ -34,18 +34,22 @@ export const ProductCard = ({ product }) => {
         <img
           src={currentImage}
           alt={product.title}
+          onError={(e) => {
+            e.currentTarget.src =
+              'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80'
+          }}
           className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
         />
 
         {/* Badges */}
-        <div className="absolute top-2 left-2 flex flex-col gap-1">
+        <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
           {isOutOfStock ? (
             <span className="px-2 py-0.5 bg-critical text-canvas text-[10px] uppercase tracking-eyebrow font-medium">
               Sold Out
             </span>
           ) : product.categories?.[0] ? (
-            <span className="px-2 py-0.5 bg-canvas/90 backdrop-blur-xs border border-hairline text-ink text-[10px] uppercase tracking-eyebrow">
+            <span className="px-2 py-0.5 bg-canvas border border-hairline text-ink text-[10px] uppercase tracking-eyebrow font-medium">
               {product.categories[0]}
             </span>
           ) : null}

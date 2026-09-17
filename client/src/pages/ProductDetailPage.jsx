@@ -14,14 +14,56 @@ export const ProductDetailPage = () => {
   const [hasAttemptedFetch, setHasAttemptedFetch] = useState(false)
 
   useEffect(() => {
-    if (allProducts.length > 0) {
-      const found = allProducts.find((p) => (p._id || p.id) === id)
-      setProduct(found || null)
-      setHasAttemptedFetch(true)
-    } else {
-      loadProducts(1).then(() => {
+    let isMounted = true
+
+    const findGarment = async () => {
+      // 1. Check in already loaded products
+      let found = allProducts.find((p) => (p._id || p.id) === id)
+      if (found) {
+        if (isMounted) {
+          setProduct(found)
+          setHasAttemptedFetch(true)
+        }
+        return
+      }
+
+      // 2. Fetch page 1
+      const res = await loadProducts(1)
+      const resData = res?.payload?.data || res?.payload || {}
+      const page1Products = resData.products || res?.payload?.products || []
+      found = page1Products.find((p) => (p._id || p.id) === id)
+      if (found) {
+        if (isMounted) {
+          setProduct(found)
+          setHasAttemptedFetch(true)
+        }
+        return
+      }
+
+      // 3. If multiple pages exist, check subsequent pages
+      const totalPages = resData.totalPages || res?.payload?.totalPages || 1
+      for (let p = 2; p <= totalPages; p++) {
+        const nextRes = await loadProducts(p)
+        const nextResData = nextRes?.payload?.data || nextRes?.payload || {}
+        const nextProducts = nextResData.products || nextRes?.payload?.products || []
+        found = nextProducts.find((item) => (item._id || item.id) === id)
+        if (found) {
+          if (isMounted) {
+            setProduct(found)
+            setHasAttemptedFetch(true)
+          }
+          return
+        }
+      }
+
+      if (isMounted) {
         setHasAttemptedFetch(true)
-      })
+      }
+    }
+
+    findGarment()
+    return () => {
+      isMounted = false
     }
   }, [id, allProducts, loadProducts])
 

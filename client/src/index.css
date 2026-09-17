@@ -3,14 +3,94 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* Direct CSS variable tokens */
+    --color-bg: #F7F3EE;
+    --color-surface: #FDFBF8;
+    --color-surface-elevated: #FFFFFF;
+    --color-text: #1C1917;
+    --color-text-secondary: #6B625B;
+    --color-text-muted: #8C827A;
+    --color-border: #E4DCD2;
+    --color-sand: #C9B79C;
+    --color-accent: #A8442A;
+    --color-positive: #3F5D45;
+    --color-critical: #8C2F2A;
+
+    /* RGB channel values for Tailwind opacity utility support */
+    --canvas-rgb: 247 243 238;          /* #F7F3EE warm bone */
+    --surface-rgb: 253 251 248;         /* #FDFBF8 warm surface */
+    --surface-elevated-rgb: 255 255 255;/* #FFFFFF elevated */
+    --ink-rgb: 28 25 23;                /* #1C1917 deep warm ink */
+    --ink-secondary-rgb: 107 98 91;     /* #6B625B secondary text */
+    --ink-muted-rgb: 140 130 122;       /* #8C827A muted text */
+    --hairline-rgb: 228 220 210;        /* #E4DCD2 hairline border */
+    --sand-rgb: 201 183 156;            /* #C9B79C warm sand */
+    --accent-rgb: 168 68 42;            /* #A8442A terracotta */
+    --positive-rgb: 63 93 69;           /* #3F5D45 positive forest */
+    --critical-rgb: 140 47 42;          /* #8C2F2A critical red */
+  }
+
+  .dark {
+    /* Direct CSS variable tokens */
+    --color-bg: #141312;
+    --color-surface: #1C1A18;
+    --color-surface-elevated: #24211F;
+    --color-text: #F1ECE5;
+    --color-text-secondary: #B8B0A7;
+    --color-text-muted: #8F8881;
+    --color-border: #35312D;
+    --color-sand: #3D352E;
+    --color-accent: #BA5338;
+    --color-positive: #6F8A72;
+    --color-critical: #B65A55;
+
+    /* RGB channel values for Tailwind opacity utility support */
+    --canvas-rgb: 20 19 18;             /* #141312 warm dark background */
+    --surface-rgb: 28 26 24;            /* #1C1A18 warm charcoal surface */
+    --surface-elevated-rgb: 36 33 31;   /* #24211F elevated charcoal surface */
+    --ink-rgb: 241 236 229;             /* #F1ECE5 primary text */
+    --ink-secondary-rgb: 184 176 167;   /* #B8B0A7 secondary text */
+    --ink-muted-rgb: 143 136 129;       /* #8F8881 muted text */
+    --hairline-rgb: 53 49 45;           /* #35312D subtle dark border */
+    --sand-rgb: 61 53 46;               /* #3D352E warm dark sand */
+    --accent-rgb: 186 83 56;            /* #BA5338 terracotta adjusted for contrast */
+    --positive-rgb: 111 138 114;        /* #6F8A72 positive sage */
+    --critical-rgb: 182 90 85;          /* #B65A55 critical warm red */
+  }
+
   body {
     @apply bg-canvas text-ink;
+    transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
+  /* Structural elements smooth theme transition */
+  header, nav, footer, main, aside, [class*="bg-surface"], [class*="bg-canvas"], [class*="border-hairline"] {
+    transition-property: background-color, border-color, color;
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+  }
+
+  /* Respect user motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
   ::selection {
-    background-color: #C9B79C;
-    color: #1C1917;
+    background-color: rgb(var(--sand-rgb));
+    color: rgb(var(--ink-rgb));
+  }
+
+  /* Dropdown options dark mode consistency */
+  select option {
+    background-color: rgb(var(--surface-rgb));
+    color: rgb(var(--ink-rgb));
   }
 }
 
@@ -21,13 +101,13 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #F7F3EE;
+  background: rgb(var(--canvas-rgb));
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #E4DCD2;
+  background: rgb(var(--hairline-rgb));
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #C9B79C;
+  background: rgb(var(--sand-rgb));
 }

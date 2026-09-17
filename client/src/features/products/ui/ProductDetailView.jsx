@@ -155,29 +155,31 @@ export const ProductDetailView = ({
                 </span>
               </div>
 
-              <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-                {product.sizes?.map((s) => {
-                  const isAvailable = s.stock > 0
-                  const isSelected = selectedSize === s.size
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((sz) => {
+                  const sizeObj = product.sizes?.find((s) => s.size === sz)
+                  const stock = sizeObj ? sizeObj.stock : 0
+                  const isAvailable = stock > 0
+                  const isSelected = selectedSize === sz
 
                   return (
                     <button
-                      key={s.size}
+                      key={sz}
                       type="button"
                       disabled={!isAvailable}
-                      onClick={() => handleSizeSelect(s)}
-                      className={`h-11 flex flex-col items-center justify-center border text-xs uppercase tracking-eyebrow transition-all ${
+                      onClick={() => handleSizeSelect({ size: sz, stock })}
+                      className={`h-12 flex flex-col items-center justify-center border text-xs uppercase tracking-eyebrow transition-all ${
                         !isAvailable
-                          ? 'border-hairline bg-surface text-ink-muted/40 cursor-not-allowed line-through'
+                          ? 'border-hairline bg-canvas text-ink-muted/40 cursor-not-allowed line-through'
                           : isSelected
                           ? 'border-ink bg-ink text-canvas font-medium'
                           : 'border-hairline bg-surface text-ink hover:border-ink'
                       }`}
                     >
-                      <span>{s.size}</span>
+                      <span>{sz}</span>
                       {isAvailable && (
-                        <span className="text-[9px] opacity-70">
-                          {s.stock <= 3 ? `(${s.stock} left)` : ''}
+                        <span className="text-[9px] opacity-75">
+                          {stock <= 5 ? `${stock} left` : 'In Stock'}
                         </span>
                       )}
                     </button>
@@ -211,6 +213,9 @@ export const ProductDetailView = ({
                     +
                   </button>
                 </div>
+                <span className="text-[11px] text-ink-muted mt-1 block">
+                  Max available: {currentStock} units
+                </span>
               </div>
             )}
 

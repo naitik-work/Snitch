@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -7,17 +8,21 @@ export default {
   theme: {
     extend: {
       colors: {
-        canvas: '#F7F3EE',
-        surface: '#FDFBF8',
-        ink: {
-          DEFAULT: '#1C1917',
-          muted: '#6B625B',
+        canvas: 'rgb(var(--canvas-rgb) / <alpha-value>)',
+        surface: {
+          DEFAULT: 'rgb(var(--surface-rgb) / <alpha-value>)',
+          elevated: 'rgb(var(--surface-elevated-rgb) / <alpha-value>)',
         },
-        hairline: '#E4DCD2',
-        sand: '#C9B79C',
-        accent: '#A8442A',
-        positive: '#3F5D45',
-        critical: '#8C2F2A',
+        ink: {
+          DEFAULT: 'rgb(var(--ink-rgb) / <alpha-value>)',
+          secondary: 'rgb(var(--ink-secondary-rgb) / <alpha-value>)',
+          muted: 'rgb(var(--ink-muted-rgb) / <alpha-value>)',
+        },
+        hairline: 'rgb(var(--hairline-rgb) / <alpha-value>)',
+        sand: 'rgb(var(--sand-rgb) / <alpha-value>)',
+        accent: 'rgb(var(--accent-rgb) / <alpha-value>)',
+        positive: 'rgb(var(--positive-rgb) / <alpha-value>)',
+        critical: 'rgb(var(--critical-rgb) / <alpha-value>)',
       },
       fontFamily: {
         serif: ['"Instrument Serif"', '"Libre Caslon Text"', '"Playfair Display"', 'serif'],

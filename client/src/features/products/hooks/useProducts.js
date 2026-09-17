@@ -23,16 +23,16 @@ export const useProducts = (autoFetch = false, page = 1) => {
   } = useSelector((state) => state.products)
 
   useEffect(() => {
-    if (autoFetch && items.length === 0 && !isLoading) {
-      dispatch(fetchProducts(page))
+    if (autoFetch) {
+      dispatch(fetchProducts({ page, category: selectedCategory }))
     }
-  }, [dispatch, autoFetch, items.length, isLoading, page])
+  }, [dispatch, autoFetch, page, selectedCategory])
 
   const loadProducts = useCallback(
-    (targetPage = 1) => {
-      return dispatch(fetchProducts(targetPage))
+    (targetPage = 1, targetCategory = selectedCategory) => {
+      return dispatch(fetchProducts({ page: targetPage, category: targetCategory }))
     },
-    [dispatch]
+    [dispatch, selectedCategory]
   )
 
   const changeCategory = useCallback(
@@ -94,9 +94,20 @@ export const useProducts = (autoFetch = false, page = 1) => {
     return result
   }, [items, selectedCategory, searchQuery, sortBy])
 
-  // Extract all unique categories
+  // Extract all unique categories with canonical seed categories
   const allCategories = useMemo(() => {
-    const set = new Set(['All'])
+    const canonical = [
+      'All',
+      'Men',
+      'T-Shirts',
+      'Shirts',
+      'Jeans',
+      'Hoodies',
+      'Jackets',
+      'Joggers',
+      'Shorts',
+    ]
+    const set = new Set(canonical)
     items.forEach((p) => {
       p.categories?.forEach((c) => set.add(c))
     })

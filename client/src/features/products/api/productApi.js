@@ -1,8 +1,12 @@
 import axiosClient from '../../../api/axiosClient'
 
 export const productApi = {
-  getProducts: async (page = 1) => {
-    return await axiosClient.get(`/products?page=${page}`)
+  getProducts: async (page = 1, category = '') => {
+    let url = `/products?page=${page}`
+    if (category && category !== 'All') {
+      url += `&category=${encodeURIComponent(category)}`
+    }
+    return await axiosClient.get(url)
   },
 
   getSellerProducts: async (page = 1) => {

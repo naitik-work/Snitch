@@ -260,18 +260,16 @@ export async function getProductsBySeller(req, res) {
         seller: user.id
     })
 
-    const totalPages = Math.ceil(totalProducts / 5)
-
-    const page = req.query.page ? Math.min(parseInt(req.query.page), totalPages) : 1
-
-    const skip = (page - 1) * 5
+    const totalPages = Math.max(1, Math.ceil(totalProducts / 5))
+    const requestedPage = req.query.page ? parseInt(req.query.page) : 1
+    const page = Math.max(1, Math.min(isNaN(requestedPage) ? 1 : requestedPage, totalPages))
+    const skip = Math.max(0, (page - 1) * 5)
 
     const products = await productModel.find({
         seller: user.id
     })
         .skip(skip)
         .limit(5)
-
 
     return res.status(200).json({
         message: "Products retrieved successfully",
@@ -286,17 +284,28 @@ export async function getProductsBySeller(req, res) {
 
 export async function getProducts(req, res) {
 
-    const totalProducts = await productModel.countDocuments({
-        isPublished: true
-    })
-    const totalPages = Math.ceil(totalProducts / 20)
+    const filter = { isPublished: true }
 
-    const page = req.query.page ? Math.min(parseInt(req.query.page), totalPages) : 1
-    const skip = (page - 1) * 20
+    if (req.query.category && req.query.category !== 'All') {
+        filter.categories = { $regex: new RegExp(`^${req.query.category}$`, 'i') }
+    }
 
-    const products = await productModel.find({
-        isPublished: true
-    })
+    if (req.query.search) {
+        filter.$or = [
+            { title: { $regex: req.query.search, $options: 'i' } },
+            { description: { $regex: req.query.search, $options: 'i' } },
+            { categories: { $regex: req.query.search, $options: 'i' } }
+        ]
+    }
+
+    const totalProducts = await productModel.countDocuments(filter)
+    const totalPages = Math.max(1, Math.ceil(totalProducts / 20))
+
+    const requestedPage = req.query.page ? parseInt(req.query.page) : 1
+    const page = Math.max(1, Math.min(isNaN(requestedPage) ? 1 : requestedPage, totalPages))
+    const skip = Math.max(0, (page - 1) * 20)
+
+    const products = await productModel.find(filter)
         .skip(skip)
         .limit(20)
 
